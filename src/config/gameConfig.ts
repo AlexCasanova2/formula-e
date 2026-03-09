@@ -9,8 +9,10 @@ export const GAME_CONFIG = {
     // Branding y Textos del Evento
     event: {
         name: '2026 CUPRA Raval Madrid E-Prix',
-        title: 'Memory Game',
-        copy: 'Encuentra las parejas de los equipos',
+        title: 'Official Games',
+        copy: 'Selecciona tu desafío Formula E',
+        memoryTitle: 'Memory Game: Encuentra las parejas',
+        matchingTitle: 'Matching Game: Une los pilotos',
         tagline: 'Kids Zone Official Activation',
         victoryTitle: '¡BANDERA A CUADROS!',
         victoryBody: 'Misión cumplida en el {event}. Has demostrado una memoria digna de un campeón.',

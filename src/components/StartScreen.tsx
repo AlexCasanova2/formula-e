@@ -1,8 +1,9 @@
 import React from 'react';
 import { GAME_CONFIG } from '../config/gameConfig';
+import type { GameMode } from '../types';
 
 interface StartScreenProps {
-    onStart: () => void;
+    onStart: (mode: GameMode) => void;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
@@ -12,15 +13,15 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
             {/* Luz ambiental tecnológica */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,_var(--color-fe-blue-light)_0%,_transparent_60%)] opacity-20 blur-[100px] pointer-events-none" />
 
-            <div className="relative flex w-full max-w-5xl flex-col items-center justify-center rounded-[40px] bg-slate-900/40 border border-slate-700/50 p-20 text-center shadow-2xl overflow-hidden">
+            <div className="relative flex w-full max-w-6xl flex-col items-center justify-center rounded-[40px] bg-slate-900/40 border border-slate-700/50 p-12 md:p-16 text-center shadow-2xl overflow-hidden">
 
                 {/* Textura de Branding configurable */}
                 <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none"
                     style={{ backgroundImage: `url('${GAME_CONFIG.assets.textureOverlay}')` }} />
 
                 {/* Brand Header */}
-                <div className="relative mb-12 flex flex-col items-center space-y-4">
-                    <div className="h-24 md:h-28 flex items-center justify-center opacity-90 mb-4 transition-all duration-700">
+                <div className="relative mb-10 flex flex-col items-center space-y-4">
+                    <div className="h-20 md:h-24 flex items-center justify-center opacity-90 transition-all duration-700">
                         {/* Logo Formula E Centrado */}
                         <img
                             src={GAME_CONFIG.assets.logoFE}
@@ -30,28 +31,54 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                     </div>
 
                     <div className="px-6 py-2 rounded-full border border-slate-600/60 bg-slate-800/50 backdrop-blur-md shadow-lg">
-                        <span className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--color-fe-cyan)]">
+                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-fe-cyan)]">
                             {GAME_CONFIG.event.name}
                         </span>
                     </div>
                 </div>
 
-                <h1 className="relative mb-8 text-5xl font-black tracking-tight text-white drop-shadow-xl md:text-7xl leading-tight uppercase italic">
+                <h1 className="relative mb-12 text-4xl font-black tracking-tight text-white drop-shadow-xl md:text-6xl uppercase italic">
                     {GAME_CONFIG.event.title}
                 </h1>
 
-                <p className="relative mb-16 max-w-2xl text-2xl font-light text-slate-300">
-                    {GAME_CONFIG.event.copy}. Memoriza las parejas de pilotos oficiales.
-                </p>
+                {/* Opciones de Juego */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl relative z-10">
 
-                <button
-                    onClick={onStart}
-                    aria-label="Empezar partida de memoria"
-                    className="relative group inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-[var(--color-fe-blue)] to-[var(--color-fe-cyan)] px-20 py-8 text-3xl font-black uppercase tracking-wider text-white shadow-[0_0_40px_rgba(0,229,255,0.3)] transition-all duration-300 hover:scale-[1.03] active:scale-95"
-                >
-                    <span className="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100"></span>
-                    Empezar Partida
-                </button>
+                    {/* Modo Memory */}
+                    <button
+                        onClick={() => onStart('memory')}
+                        className="group relative flex flex-col items-center p-8 rounded-[32px] bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 active:scale-95 text-center"
+                    >
+                        <div className="mb-6 rounded-2xl bg-[var(--color-fe-blue)]/20 p-5 group-hover:bg-[var(--color-fe-blue)]/40 transition-colors">
+                            <svg className="w-10 h-10 text-[var(--color-fe-cyan)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter mb-3">Memory Game</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed max-w-[320px]">Encuentra las parejas de pilotos de cada escudería en el menor tiempo posible.</p>
+                        <div className="mt-8 px-6 py-2 bg-[var(--color-fe-cyan)] text-[#050810] text-xs font-black uppercase tracking-widest rounded-full transition-all duration-300 group-hover:scale-110 shadow-lg shadow-[var(--color-fe-cyan)]/20">
+                            Seleccionar
+                        </div>
+                    </button>
+
+                    {/* Modo Matching */}
+                    <button
+                        onClick={() => onStart('matching')}
+                        className="group relative flex flex-col items-center p-8 rounded-[32px] bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 active:scale-95 text-center"
+                    >
+                        <div className="mb-6 rounded-2xl bg-[var(--color-fe-blue)]/20 p-5 group-hover:bg-[var(--color-fe-blue)]/40 transition-colors">
+                            <svg className="w-10 h-10 text-[var(--color-fe-cyan)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                        </div>
+                        <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter mb-3">Matching Game</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed max-w-[320px]">Une a cada piloto profesional con su escudería correcta. ¡Demuestra tu conocimiento!</p>
+                        <div className="mt-8 px-6 py-2 bg-[var(--color-fe-cyan)] text-[#050810] text-xs font-black uppercase tracking-widest rounded-full transition-all duration-300 group-hover:scale-110 shadow-lg shadow-[var(--color-fe-cyan)]/20">
+                            Seleccionar
+                        </div>
+                    </button>
+
+                </div>
             </div>
         </div>
     );

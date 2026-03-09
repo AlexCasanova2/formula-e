@@ -20,3 +20,4 @@ export interface Card {
 }
 
 export type GameState = 'START' | 'PLAYING' | 'VICTORY';
+export type GameMode = 'memory' | 'matching';

@@ -40,3 +40,9 @@ export const getTeamLogoUrl = (teamId: string): string => {
 export const getBrandingAssetUrl = (filename: string): string => {
     return `${ASSET_PATHS.branding}${filename}`;
 };
+/**
+ * Devuelve el color hexadecimal asociado a una escudería.
+ */
+export const getTeamColor = (teamId: string): string => {
+    return (GAME_CONFIG.colors.teams as any)[teamId] || GAME_CONFIG.colors.accent;
+};

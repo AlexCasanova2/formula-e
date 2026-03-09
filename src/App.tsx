@@ -2,8 +2,9 @@ import { useState, useMemo, useCallback } from 'react';
 import { StartScreen } from './components/StartScreen';
 import { Hud } from './components/Hud';
 import { GameGrid } from './components/GameGrid';
+import { MatchingGame } from './components/MatchingGame';
 import { VictoryModal } from './components/VictoryModal';
-import type { Driver } from './types';
+import type { Driver, GameMode } from './types';
 import { mockDrivers } from './data/gameData';
 import { useMemoryGame } from './hooks/useMemoryGame';
 import { useGameTimer } from './hooks/useGameTimer';
@@ -13,12 +14,12 @@ import { GAME_CONFIG } from './config/gameConfig';
 import { getDriverImageUrl } from './data/assets';
 
 function App() {
+  const [gameMode, setGameMode] = useState<GameMode | null>(null);
+
   // Inicializamos los pilotos basados en la configuración de la partida (totalPairs)
   const [activeDrivers] = useState<Driver[]>(() => {
     // Tomamos N parejas de equipos (2 pilotos por equipo)
     const pairsNeeded = GAME_CONFIG.gameplay.totalPairs;
-    // En este caso mockDrivers ya tiene 20 pilotos (10 parejas),
-    // pero lo dejamos preparado para si el totalPairs cambia en config.
     return mockDrivers.slice(0, pairsNeeded * 2);
   });
 
@@ -31,13 +32,15 @@ function App() {
     resetGame,
     handleCardTap,
     isProcessing,
+    setGameFinished,
+    setMoves,
   } = useMemoryGame(activeDrivers);
 
   const {
     formattedTime,
     resetTimer
   } = useGameTimer({
-    isRunning: gameStarted,
+    isRunning: gameStarted && gameMode !== null,
     isFinished: gameFinished
   });
 
@@ -52,20 +55,25 @@ function App() {
 
   const { isLoaded, progress } = useAssetPreloader(criticalAssets);
 
-  const handleRestart = useCallback(() => {
+  const [gameKey, setGameKey] = useState(0);
+
+  const handleHome = useCallback(() => {
     resetGame();
     resetTimer();
+    setGameMode(null);
   }, [resetGame, resetTimer]);
 
-  const handleNewGame = useCallback(() => {
+  const handleNewGame = useCallback((mode?: GameMode) => {
     resetTimer();
+    if (mode) setGameMode(mode);
+    setGameKey(prev => prev + 1);
     startGame();
   }, [resetTimer, startGame]);
 
   useIdleTimeout({
-    onIdle: handleRestart,
+    onIdle: handleHome,
     timeoutSeconds: GAME_CONFIG.gameplay.idleTimeoutSeconds,
-    enabled: gameStarted || gameFinished
+    enabled: (gameStarted || gameFinished) && gameMode !== null
   });
 
   if (!isLoaded) {
@@ -123,27 +131,42 @@ function App() {
       />
 
       {/* Pantalla Inicial */}
-      {!gameStarted && (
+      {gameMode === null && (
         <StartScreen onStart={handleNewGame} />
       )}
 
       {/* Main Game Interface */}
       <div
-        className={`relative z-10 flex h-full w-full flex-col transition-all duration-[800ms] ${gameStarted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'
+        className={`relative z-10 flex h-full w-full flex-col transition-all duration-[800ms] ${gameMode !== null ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'
           }`}
       >
-        <Hud formattedTime={formattedTime} onRestartClick={handleRestart} />
+        <Hud
+          formattedTime={formattedTime}
+          gameTitle={gameMode === 'memory' ? GAME_CONFIG.event.memoryTitle : GAME_CONFIG.event.matchingTitle}
+          onRestartClick={() => handleNewGame()}
+          onHomeClick={handleHome}
+        />
 
         <div className="flex-1 w-full flex relative overflow-hidden">
           {/* Overlay suave inferior que da contraste a las cartas */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#050810] via-transparent to-transparent opacity-80 pointer-events-none z-0" />
 
-          <GameGrid
-            cards={cards}
-            drivers={activeDrivers}
-            isProcessing={isProcessing}
-            onCardClick={handleCardTap}
-          />
+          {gameMode === 'memory' ? (
+            <GameGrid
+              key={`memory-${gameKey}`}
+              cards={cards}
+              drivers={activeDrivers}
+              isProcessing={isProcessing}
+              onCardClick={handleCardTap}
+            />
+          ) : (
+            <MatchingGame
+              key={`matching-${gameKey}`}
+              drivers={activeDrivers}
+              onVictory={() => setGameFinished(true)}
+              onMove={() => setMoves((prev: number) => prev + 1)}
+            />
+          )}
         </div>
       </div>
 
@@ -152,7 +175,7 @@ function App() {
         <VictoryModal
           formattedTime={formattedTime}
           moves={moves}
-          onRestart={handleNewGame}
+          onRestart={() => handleNewGame()}
         />
       )}
 

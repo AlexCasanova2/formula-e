@@ -3,10 +3,12 @@ import { GAME_CONFIG } from '../config/gameConfig';
 
 interface HudProps {
     formattedTime: string;
+    gameTitle: string;
     onRestartClick: () => void;
+    onHomeClick: () => void;
 }
 
-export const Hud: React.FC<HudProps> = ({ formattedTime, onRestartClick }) => {
+export const Hud: React.FC<HudProps> = ({ formattedTime, gameTitle, onRestartClick, onHomeClick }) => {
     return (
         <header className="flex h-[110px] w-full items-center justify-between bg-[#0A0E17]/80 px-10 backdrop-blur-[30px] border-b border-white/5 relative z-50 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
 
@@ -28,15 +30,15 @@ export const Hud: React.FC<HudProps> = ({ formattedTime, onRestartClick }) => {
                 </div>
             </div>
 
-            {/* Main Copy Centered - Centralizado en Config */}
-            <div className="text-center flex-1 mx-8 text-[1.4rem] font-bold tracking-tight text-white drop-shadow-sm truncate">
-                {GAME_CONFIG.event.copy}
+            {/* Main Copy Centered - Dinámico según el juego */}
+            <div className="text-center flex-1 mx-8 text-[1.4rem] font-bold tracking-tight text-white drop-shadow-sm truncate uppercase italic">
+                {gameTitle}
             </div>
 
             {/* Timer & Controls Panel Premium Layout */}
-            <div className="flex shrink-0 items-center justify-end space-x-6 min-w-[280px]">
+            <div className="flex shrink-0 items-center justify-end space-x-4 min-w-[340px]">
                 {/* Timer UI Element */}
-                <div className="flex shrink-0 items-center justify-center rounded-[16px] bg-[#050810] px-8 py-2 border border-slate-700/60 shadow-inner">
+                <div className="flex shrink-0 items-center justify-center rounded-[16px] bg-[#050810] px-8 py-2 border border-slate-700/60 shadow-inner mr-2">
                     <div className="flex flex-col items-center justify-center">
                         <span className="text-[9px] uppercase font-black tracking-[0.3em] text-[var(--color-fe-cyan)]/70 mb-0.5">
                             TIEMPO
@@ -47,11 +49,23 @@ export const Hud: React.FC<HudProps> = ({ formattedTime, onRestartClick }) => {
                     </div>
                 </div>
 
+                {/* Home Button CTA */}
+                <button
+                    onClick={onHomeClick}
+                    aria-label="Ir al inicio"
+                    className="group flex h-14 w-14 items-center justify-center rounded-xl bg-slate-800/40 border border-white/10 hover:bg-slate-700 transition duration-300 active:scale-95 shadow-lg relative overflow-hidden"
+                >
+                    <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-10 transition-opacity" />
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                </button>
+
                 {/* Restart Button CTA */}
                 <button
                     onClick={onRestartClick}
                     aria-label="Reiniciar partida"
-                    className="group flex h-14 w-14 items-center justify-center rounded-full bg-slate-800/80 border border-slate-600/50 hover:bg-slate-700 transition duration-300 active:scale-95 shadow-lg relative overflow-hidden"
+                    className="group flex h-14 w-14 items-center justify-center rounded-xl bg-slate-800/80 border border-slate-600/50 hover:bg-slate-700 transition duration-300 active:scale-95 shadow-lg relative overflow-hidden"
                 >
                     <div className="absolute inset-0 bg-[var(--color-fe-blue-light)] opacity-0 group-hover:opacity-20 transition-opacity" />
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

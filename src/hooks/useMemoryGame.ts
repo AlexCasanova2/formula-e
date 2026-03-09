@@ -142,5 +142,7 @@ export const useMemoryGame = (drivers: Driver[]) => {
         resetGame,
         handleCardTap,
         isProcessing,
+        setGameFinished,
+        setMoves
     };
 };
