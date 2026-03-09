@@ -7,13 +7,13 @@ import type { Team, Driver, Card } from '../types';
 export const mockTeams: Team[] = [
     { id: 'cupra', name: 'ABT CUPRA Formula E Team' },
     { id: 'jaguar', name: 'Jaguar TCS Racing' },
-    { id: 'porsche', name: 'TAG Heuer Porsche' },
+    { id: 'porsche', name: 'Porsche' },
     { id: 'ds', name: 'DS Penske' },
     { id: 'andretti', name: 'Andretti Formula E' },
     { id: 'nissan', name: 'Nissan Formula E Team' },
-    { id: 'mclaren', name: 'NEOM McLaren' },
-    { id: 'maserati', name: 'Maserati MSG Racing' },
-    { id: 'ert', name: 'ERT Formula E Team' },
+    { id: 'yamaha', name: 'Lola Yamaha' },
+    { id: 'citroen', name: 'Citroën Racing' },
+    { id: 'envision', name: 'Envision Racing' },
     { id: 'mahindra', name: 'Mahindra Racing' }
 ];
 
@@ -22,45 +22,45 @@ export const mockTeams: Team[] = [
  * Tenemos exactamente 2 pilotos por cada escudería.
  */
 export const mockDrivers: Driver[] = [
-    // ABT CUPRA
-    { id: 'd-cupra-1', name: 'Lucas di Grassi', teamId: 'cupra', teamName: 'ABT CUPRA Formula E Team', image: '' },
-    { id: 'd-cupra-2', name: 'Nico Müller', teamId: 'cupra', teamName: 'ABT CUPRA Formula E Team', image: '' },
+    // ABT CUPRA - OK
+    { id: 'd-cupra-1', name: 'Josep Maria Martí', teamId: 'cupra', teamName: 'ABT CUPRA Formula E Team', image: 'josep-maria-marti.png' },
+    { id: 'd-cupra-2', name: 'Dan Ticktum', teamId: 'cupra', teamName: 'ABT CUPRA Formula E Team', image: 'dan-ticktum.png' },
 
-    // Jaguar TCS
-    { id: 'd-jag-1', name: 'Mitch Evans', teamId: 'jaguar', teamName: 'Jaguar TCS Racing', image: '' },
-    { id: 'd-jag-2', name: 'Nick Cassidy', teamId: 'jaguar', teamName: 'Jaguar TCS Racing', image: '' },
+    // Jaguar TCS - OK
+    { id: 'd-jag-1', name: 'Mitch Evans', teamId: 'jaguar', teamName: 'Jaguar TCS Racing', image: 'mitch-evans.png' },
+    { id: 'd-jag-2', name: 'António Félix Da Costa', teamId: 'jaguar', teamName: 'Jaguar TCS Racing', image: 'antonio-felix-dacosta.png' },
 
-    // Porsche
-    { id: 'd-por-1', name: 'Pascal Wehrlein', teamId: 'porsche', teamName: 'TAG Heuer Porsche', image: '' },
-    { id: 'd-por-2', name: 'A. F. da Costa', teamId: 'porsche', teamName: 'TAG Heuer Porsche', image: '' },
+    // Porsche - OK
+    { id: 'd-por-1', name: 'Nico Müller', teamId: 'porsche', teamName: 'Porsche', image: 'nico-muller.png' },
+    { id: 'd-por-2', name: 'Pascal Wehrlein', teamId: 'porsche', teamName: 'Porsche', image: 'pascal-wehrlein.png' },
 
-    // DS Penske
-    { id: 'd-ds-1', name: 'Jean-Éric Vergne', teamId: 'ds', teamName: 'DS Penske', image: '' },
-    { id: 'd-ds-2', name: 'Stoffel Vandoorne', teamId: 'ds', teamName: 'DS Penske', image: '' },
+    // DS Penske - OK
+    { id: 'd-ds-1', name: 'Maximilian Günther', teamId: 'ds', teamName: 'DS Penske', image: 'maximilian-gunther.png' },
+    { id: 'd-ds-2', name: 'Taylor Barnard', teamId: 'ds', teamName: 'DS Penske', image: 'taylor-barnard.png' },
 
-    // Andretti
-    { id: 'd-and-1', name: 'Jake Dennis', teamId: 'andretti', teamName: 'Andretti Formula E', image: '' },
-    { id: 'd-and-2', name: 'Norman Nato', teamId: 'andretti', teamName: 'Andretti Formula E', image: '' },
+    // Andretti - OK
+    { id: 'd-and-1', name: 'Jake Dennis', teamId: 'andretti', teamName: 'Andretti Formula E', image: 'jake-dennis.png' },
+    { id: 'd-and-2', name: 'Felipe Drugovich', teamId: 'andretti', teamName: 'Andretti Formula E', image: 'felipe-drugovich.png' },
 
-    // Nissan
-    { id: 'd-nis-1', name: 'Oliver Rowland', teamId: 'nissan', teamName: 'Nissan Formula E Team', image: '' },
-    { id: 'd-nis-2', name: 'Sacha Fenestraz', teamId: 'nissan', teamName: 'Nissan Formula E Team', image: '' },
+    // Nissan - OK
+    { id: 'd-nis-1', name: 'Oliver Rowland', teamId: 'nissan', teamName: 'Nissan Formula E Team', image: 'oliver-rowland.png' },
+    { id: 'd-nis-2', name: 'Norman Nato', teamId: 'nissan', teamName: 'Nissan Formula E Team', image: 'norman-nato.png' },
 
-    // McLaren
-    { id: 'd-mcl-1', name: 'Sam Bird', teamId: 'mclaren', teamName: 'NEOM McLaren', image: '' },
-    { id: 'd-mcl-2', name: 'Jake Hughes', teamId: 'mclaren', teamName: 'NEOM McLaren', image: '' },
+    // Lola Yamaha - OK
+    { id: 'd-yam-1', name: 'Lucas Di Grassi', teamId: 'yamaha', teamName: 'Lola Yamaha', image: 'lucas-di-grassi.png' },
+    { id: 'd-yam-2', name: 'Zane Maloney', teamId: 'yamaha', teamName: 'Lola Yamaha', image: 'zane-maloney.png' },
 
-    // Maserati
-    { id: 'd-mas-1', name: 'Max Günther', teamId: 'maserati', teamName: 'Maserati MSG Racing', image: '' },
-    { id: 'd-mas-2', name: 'Jehan Daruvala', teamId: 'maserati', teamName: 'Maserati MSG Racing', image: '' },
+    // Citroën - OK
+    { id: 'd-cit-1', name: 'Nick Cassidy', teamId: 'citroen', teamName: 'Citroën Racing', image: 'nick-cassidy.png' },
+    { id: 'd-cit-2', name: 'Jean-Éric Vergne', teamId: 'citroen', teamName: 'Citroën Racing', image: 'jean-eric-vergne.png' },
 
-    // ERT
-    { id: 'd-ert-1', name: 'Dan Ticktum', teamId: 'ert', teamName: 'ERT Formula E Team', image: '' },
-    { id: 'd-ert-2', name: 'Sérgio Sette Câmara', teamId: 'ert', teamName: 'ERT Formula E Team', image: '' },
+    // Envision Racing - OK
+    { id: 'd-env-1', name: 'Joel Eriksson', teamId: 'envision', teamName: 'Envision Racing', image: 'joel-eriksson.png' },
+    { id: 'd-env-2', name: 'Sébastien Buemi', teamId: 'envision', teamName: 'Envision Racing', image: 'sebastien-buemi.png' },
 
-    // Mahindra
-    { id: 'd-mah-1', name: 'Edoardo Mortara', teamId: 'mahindra', teamName: 'Mahindra Racing', image: '' },
-    { id: 'd-mah-2', name: 'Nyck de Vries', teamId: 'mahindra', teamName: 'Mahindra Racing', image: '' }
+    // Mahindra - OK
+    { id: 'd-mah-1', name: 'Edoardo Mortara', teamId: 'mahindra', teamName: 'Mahindra Racing', image: 'edoardo-mortara.png' },
+    { id: 'd-mah-2', name: 'Nyck de Vries', teamId: 'mahindra', teamName: 'Mahindra Racing', image: 'nyck-devries.png' }
 ];
 
 /**

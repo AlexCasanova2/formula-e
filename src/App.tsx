@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { StartScreen } from './components/StartScreen';
 import { Hud } from './components/Hud';
 import { GameGrid } from './components/GameGrid';
@@ -7,19 +7,30 @@ import type { Driver } from './types';
 import { mockDrivers } from './data/gameData';
 import { useMemoryGame } from './hooks/useMemoryGame';
 import { useGameTimer } from './hooks/useGameTimer';
+import { useIdleTimeout } from './hooks/useIdleTimeout';
+import { useAssetPreloader } from './hooks/useAssetPreloader';
+import { GAME_CONFIG } from './config/gameConfig';
+import { getDriverImageUrl } from './data/assets';
 
 function App() {
-  const [activeDrivers] = useState<Driver[]>(mockDrivers);
+  // Inicializamos los pilotos basados en la configuración de la partida (totalPairs)
+  const [activeDrivers] = useState<Driver[]>(() => {
+    // Tomamos N parejas de equipos (2 pilotos por equipo)
+    const pairsNeeded = GAME_CONFIG.gameplay.totalPairs;
+    // En este caso mockDrivers ya tiene 20 pilotos (10 parejas),
+    // pero lo dejamos preparado para si el totalPairs cambia en config.
+    return mockDrivers.slice(0, pairsNeeded * 2);
+  });
 
   const {
     cards,
     moves,
-    matches,
     gameStarted,
     gameFinished,
     startGame,
     resetGame,
     handleCardTap,
+    isProcessing,
   } = useMemoryGame(activeDrivers);
 
   const {
@@ -30,32 +41,87 @@ function App() {
     isFinished: gameFinished
   });
 
-  const handleStart = () => {
-    resetTimer();
-    startGame();
-  };
+  // Preloading critical assets to ensure smooth event experience
+  const criticalAssets = useMemo(() => [
+    GAME_CONFIG.assets.logoFE,
+    GAME_CONFIG.assets.logoEvent,
+    GAME_CONFIG.assets.backgroundKV,
+    GAME_CONFIG.assets.textureOverlay,
+    ...activeDrivers.map(d => getDriverImageUrl(d.image) || '')
+  ].filter(url => url !== ''), [activeDrivers]);
 
-  const handleRestart = () => {
+  const { isLoaded, progress } = useAssetPreloader(criticalAssets);
+
+  const handleRestart = useCallback(() => {
     resetGame();
     resetTimer();
-  };
+  }, [resetGame, resetTimer]);
+
+  const handleNewGame = useCallback(() => {
+    resetTimer();
+    startGame();
+  }, [resetTimer, startGame]);
+
+  useIdleTimeout({
+    onIdle: handleRestart,
+    timeoutSeconds: GAME_CONFIG.gameplay.idleTimeoutSeconds,
+    enabled: gameStarted || gameFinished
+  });
+
+  if (!isLoaded) {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#050810] text-white font-sans">
+        <div className="mb-10 flex items-center animate-pulse">
+          <span className="text-4xl font-black italic tracking-tighter text-white mr-2">FORMULA</span>
+          <span className="text-4xl font-black italic tracking-tighter text-[var(--color-fe-cyan)]">E</span>
+        </div>
+        <div className="w-[300px] h-1.5 bg-slate-800 rounded-full overflow-hidden mb-4 shadow-inner">
+          <div
+            className="h-full bg-gradient-to-r from-[var(--color-fe-blue)] to-[var(--color-fe-cyan)] transition-all duration-300 shadow-[0_0_15px_var(--color-fe-cyan-glow)]"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-cyan-500/80">
+          {progress}% - INICIALIZANDO EXPERIENCIA
+        </p>
+      </div>
+    );
+  }
 
   return (
     <main className="relative flex h-screen w-screen flex-col overflow-hidden bg-[#0A0E17] font-sans text-white select-none">
 
       {/* Background Decorators Premium FE */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_0%,_#111A2E_0%,_#050810_100%)] pointer-events-none transition-colors duration-1000"></div>
+      <div className="absolute inset-0 z-0 bg-[#050810] pointer-events-none"></div>
 
-      {/* Luces volumétricas animadas emulando circuito nocturno */}
-      <div className="absolute -top-[500px] -right-[500px] z-0 h-[1000px] w-[1000px] rounded-full bg-[var(--color-fe-blue)] opacity-10 blur-[150px] pointer-events-none bg-pulse-slow"></div>
-      <div className="absolute -bottom-[500px] -left-[500px] z-0 h-[1000px] w-[1000px] rounded-full bg-[var(--color-fe-cyan)] opacity-[0.06] blur-[150px] pointer-events-none bg-pulse-slow object-none [animation-delay:-4s]"></div>
+      {/* Background Image KV (Configurable) - Aumentada la opacidad para que se vea */}
+      <div
+        className="absolute inset-0 z-0 opacity-50 pointer-events-none bg-cover bg-center transition-opacity"
+        style={{ backgroundImage: `url('${GAME_CONFIG.assets.backgroundKV}')` }}
+      />
+
+      {/* Luces volumétricas emulando circuito nocturno usando colores de config (Estáticas) */}
+      <div
+        className="absolute -top-[500px] -right-[500px] z-0 h-[1000px] w-[1000px] rounded-full opacity-10 blur-[150px] pointer-events-none"
+        style={{ backgroundColor: GAME_CONFIG.colors.primary }}
+      ></div>
+      <div
+        className="absolute -bottom-[500px] -left-[500px] z-0 h-[1000px] w-[1000px] rounded-full opacity-[0.06] blur-[150px] pointer-events-none"
+        style={{ backgroundColor: GAME_CONFIG.colors.secondary }}
+      ></div>
 
       {/* Grid texture superpuesta al fondo para dar textura técnica de "carbon fiber" o diseño UI HUD */}
       <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none mix-blend-overlay" />
 
+      {/* Texture Overlay (Carbon/Branding) */}
+      <div
+        className="absolute inset-0 z-0 opacity-5 pointer-events-none grayscale invert mix-blend-screen"
+        style={{ backgroundImage: `url('${GAME_CONFIG.assets.textureOverlay}')`, backgroundSize: '800px' }}
+      />
+
       {/* Pantalla Inicial */}
       {!gameStarted && (
-        <StartScreen onStart={handleStart} />
+        <StartScreen onStart={handleNewGame} />
       )}
 
       {/* Main Game Interface */}
@@ -72,6 +138,7 @@ function App() {
           <GameGrid
             cards={cards}
             drivers={activeDrivers}
+            isProcessing={isProcessing}
             onCardClick={handleCardTap}
           />
         </div>
@@ -79,7 +146,11 @@ function App() {
 
       {/* Victory Modal Overlay */}
       {gameFinished && (
-        <VictoryModal formattedTime={formattedTime} onRestart={handleRestart} />
+        <VictoryModal
+          formattedTime={formattedTime}
+          moves={moves}
+          onRestart={handleNewGame}
+        />
       )}
 
     </main>

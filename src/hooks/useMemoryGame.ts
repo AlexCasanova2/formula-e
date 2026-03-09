@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { Card as CardType, Driver } from '../types';
 import { generateDeck } from '../data/gameData';
+import { GAME_CONFIG } from '../config/gameConfig';
 
 export const useMemoryGame = (drivers: Driver[]) => {
     // Estado base del juego
@@ -38,6 +39,11 @@ export const useMemoryGame = (drivers: Driver[]) => {
         setGameStarted(false);
         setGameFinished(false);
         setCards([]);
+        setMoves(0);
+        setMatches(0);
+        setFirstCard(null);
+        setSecondCard(null);
+        setIsProcessing(false);
     }, []);
 
     // Lógica de tap encapsulada y controlada
@@ -75,22 +81,25 @@ export const useMemoryGame = (drivers: Driver[]) => {
             const isMatch = firstCard.teamId === secondCard.teamId && firstCard.driverId !== secondCard.driverId;
 
             if (isMatch) {
-                // Encerramos las cartas como "Matched"
-                setCards((prevCards) =>
-                    prevCards.map((card) => {
-                        if (card.uniqueCardId === firstCard.uniqueCardId || card.uniqueCardId === secondCard.uniqueCardId) {
-                            return { ...card, isMatched: true };
-                        }
-                        return card;
-                    })
-                );
+                // Acierto: Esperamos un segundo para que el usuario vea las cartas antes de marcarlas (UX)
+                const matchTimer = setTimeout(() => {
+                    setCards((prevCards) =>
+                        prevCards.map((card) => {
+                            if (card.uniqueCardId === firstCard.uniqueCardId || card.uniqueCardId === secondCard.uniqueCardId) {
+                                return { ...card, isMatched: true };
+                            }
+                            return card;
+                        })
+                    );
 
-                setMatches((prev) => prev + 1);
-                resetSelectionState();
+                    setMatches((prev) => prev + 1);
+                    resetSelectionState();
+                }, GAME_CONFIG.gameplay.matchDelay);
+
+                return () => clearTimeout(matchTimer);
             } else {
                 // Error de match: Volver a dar la vuelta tras un pequeño delay táctil.
-                // 800ms suele sentirse Premium en animaciones de 500ms~ CSS
-                const timer = setTimeout(() => {
+                const timeoutId = setTimeout(() => {
                     setCards((prevCards) =>
                         prevCards.map((card) => {
                             if (card.uniqueCardId === firstCard.uniqueCardId || card.uniqueCardId === secondCard.uniqueCardId) {
@@ -100,9 +109,9 @@ export const useMemoryGame = (drivers: Driver[]) => {
                         })
                     );
                     resetSelectionState();
-                }, 1000); // 1000ms delay para dar tiempo al usuario a verlas antes de cerrar
+                }, GAME_CONFIG.gameplay.mismatchDelay);
 
-                return () => clearTimeout(timer);
+                return () => clearTimeout(timeoutId);
             }
         }
     }, [firstCard, secondCard]);
@@ -110,10 +119,9 @@ export const useMemoryGame = (drivers: Driver[]) => {
     // Hook que comprueba si hemos ganado (matches = la mitad del mazo)
     useEffect(() => {
         if (cards.length > 0 && matches === cards.length / 2) {
-            // Pequeño delay para que dé tiempo a rotar visualmente la última pareja antes del modal
             const victoryTimer = setTimeout(() => {
                 setGameFinished(true);
-            }, 600);
+            }, GAME_CONFIG.gameplay.victoryDelay);
             return () => clearTimeout(victoryTimer);
         }
     }, [matches, cards.length]);
@@ -133,6 +141,6 @@ export const useMemoryGame = (drivers: Driver[]) => {
         startGame,
         resetGame,
         handleCardTap,
-        isProcessing, // Opcional, es útil si luego queremos meter un CSS global por ejemplo, pero lo retorno por si acaso
+        isProcessing,
     };
 };

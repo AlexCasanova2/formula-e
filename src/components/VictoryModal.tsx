@@ -1,50 +1,85 @@
 import React from 'react';
+import { GAME_CONFIG } from '../config/gameConfig';
 
 interface VictoryModalProps {
     formattedTime: string;
+    moves: number;
     onRestart: () => void;
 }
 
-export const VictoryModal: React.FC<VictoryModalProps> = ({ formattedTime, onRestart }) => {
+export const VictoryModal: React.FC<VictoryModalProps> = ({ formattedTime, moves, onRestart }) => {
     return (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#050810]/95 backdrop-blur-[20px] transition-opacity duration-[800ms]">
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#050810]/80 backdrop-blur-[10px] transition-all duration-1000 animate-in fade-in zoom-in">
 
-            {/* Luz ambiental tecnológica */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,_var(--color-fe-cyan)_0%,_transparent_60%)] opacity-10 blur-[100px] pointer-events-none" />
+            {/* Background Image KV (Configurable) - Misma estética que el inicio */}
+            <div
+                className="absolute inset-0 z-0 opacity-40 pointer-events-none bg-cover bg-center transition-opacity"
+                style={{ backgroundImage: `url('${GAME_CONFIG.assets.backgroundKV}')` }}
+            />
+            <div
+                className="absolute top-0 left-1/4 w-[800px] h-[800px] opacity-20 blur-[180px] pointer-events-none"
+                style={{ backgroundColor: GAME_CONFIG.colors.primary }}
+            />
+            <div
+                className="absolute bottom-0 right-1/4 w-[800px] h-[800px] opacity-10 blur-[180px] pointer-events-none"
+                style={{ backgroundColor: GAME_CONFIG.colors.secondary }}
+            />
 
-            <div className="relative flex w-full max-w-4xl flex-col items-center justify-center rounded-[40px] bg-slate-900/40 border border-slate-700/50 p-20 text-center shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden">
+            {/* Patrón Checkered sutil de fondo completo */}
+            <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 0)', backgroundSize: '32px 32px' }} />
 
-                {/* Decorative Grid Lines Simulation */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none mix-blend-overlay" />
+            <div className="relative z-10 flex w-full flex-col items-center justify-center text-center px-6">
 
-                <div className="mb-4 rounded-full bg-slate-800/80 p-6 shadow-inner border border-slate-700/50 z-10 animate-bounce">
-                    <svg className="w-16 h-16 text-[var(--color-fe-cyan)] drop-shadow-[0_0_15px_var(--color-fe-cyan-glow)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
 
-                <h2 className="relative z-10 mb-2 text-7xl font-black italic tracking-tighter text-white drop-shadow-2xl">
-                    ¡COMPLETADO!
+
+                <h2 className="mb-4 text-6xl md:text-8xl lg:text-9xl font-black italic tracking-tighter text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] uppercase">
+                    {GAME_CONFIG.event.victoryTitle}
                 </h2>
 
-                <p className="relative z-10 mb-12 text-2xl font-light text-slate-300">
-                    Misión exitosa. Has memorizado todas las escuderías.
+                <p className="mb-12 lg:mb-16 text-xl md:text-2xl lg:text-3xl font-medium text-slate-300 max-w-4xl px-4 leading-relaxed">
+                    {GAME_CONFIG.event.victoryBody.replace('{event}', GAME_CONFIG.event.name)}
                 </p>
 
-                <div className="relative z-10 mb-16 flex flex-col items-center bg-[#050810]/60 p-10 rounded-[24px] border border-slate-700/60 shadow-inner min-w-[320px]">
-                    <span className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">
-                        Tu Tiempo Final
-                    </span>
-                    <span className="mt-2 text-8xl font-mono font-black tracking-widest text-[var(--color-fe-cyan)] drop-shadow-[0_0_20px_var(--color-fe-cyan-glow)]">
-                        {formattedTime}
-                    </span>
+                {/* Stats Grid - Sin recuadro, solo flotando con sombra sutil */}
+                <div className="mb-14 lg:mb-20 flex flex-col md:flex-row gap-8 md:gap-14">
+
+                    {/* Tiempo */}
+                    <div className="flex flex-col items-center justify-center min-w-[280px] lg:min-w-[340px]">
+                        <span className="text-sm lg:text-base font-black uppercase tracking-[0.5em] text-white opacity-90 mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                            TIEMPO FINAL
+                        </span>
+                        <span className="text-7xl lg:text-8xl xl:text-9xl font-mono font-black tracking-widest text-[var(--color-fe-cyan)] drop-shadow-[0_0_25px_var(--color-fe-cyan-glow)]">
+                            {formattedTime}
+                        </span>
+                    </div>
+
+                    {/* Movimientos */}
+                    <div className="flex flex-col items-center justify-center min-w-[280px] lg:min-w-[340px]">
+                        <span className="text-sm lg:text-base font-black uppercase tracking-[0.5em] text-white opacity-90 mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                            MOVIMIENTOS
+                        </span>
+                        <div className="flex items-baseline gap-3">
+                            <span className="text-7xl lg:text-8xl xl:text-9xl font-mono font-black text-white">
+                                {moves}
+                            </span>
+                        </div>
+                    </div>
+
                 </div>
 
+                {/* Botón Acción - Más grande y Premium */}
                 <button
                     onClick={onRestart}
-                    className="relative z-10 group inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-slate-200 to-white px-20 py-8 text-3xl font-black uppercase tracking-widest text-[#050810] shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                    className="group active:scale-95 transition-all duration-300 relative"
                 >
-                    <span className="absolute inset-0 bg-white opacity-0 transition-opacity group-hover:opacity-100"></span>
-                    Jugar de Nuevo
+                    <div className="absolute inset-0 bg-[var(--color-fe-cyan)] blur-[40px] opacity-30 group-hover:opacity-60 transition-opacity rounded-full animate-pulse" />
+                    <div className="relative inline-flex items-center justify-center overflow-hidden rounded-full bg-white px-16 md:px-24 lg:px-32 py-6 lg:py-8 text-2xl lg:text-4xl font-black uppercase tracking-[0.25em] text-[#050810] shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+                        <span className="relative z-10">{GAME_CONFIG.event.victoryButton}</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    </div>
                 </button>
+
             </div>
         </div>
     );

@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# Formula E Memory Game - Event Edition 🏎️⚡
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Experiencia web premium diseñada para activaciones físicas (iPad/Kiosk) en los eventos oficiales de la Formula E (Kids Zone). Optimizado para el **2026 CUPRA Raval Madrid E-Prix**.
 
-Currently, two official plugins are available:
+## 🚀 Inicio Rápido
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Instalar dependencias**: `npm install`
+2. **Ejecutar en desarrollo**: `npm run dev`
+3. **Build para producción**: `npm run build`
 
-## React Compiler
+## 📁 Estructura del Proyecto
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   `src/config/gameConfig.ts`: **Centro de Mandos**. Aquí se cambia el nombre del evento, logos, colores y tiempos de juego.
+*   `src/data/gameData.ts`: Base de datos de pilotos y escuderías.
+*   `src/data/assets.ts`: Helpers para resolución de rutas de imágenes.
+*   `src/hooks/`: Lógica central (Temporizador, Juego de Memoria, Idle Timeout).
+*   `src/components/`: Interfaz visual (Grid, Cards, HUD, Modales).
 
-## Expanding the ESLint configuration
+## 🛠️ Guía de Modificación
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Cómo cambiar el Branding (Evento/Patrocinador)
+Dirígete a `src/config/gameConfig.ts` y actualiza el objeto `GAME_CONFIG.event`:
+- `name`: Nombre que aparecerá en HUD e Inicio.
+- `title`: Título principal.
+- `assets.logoFE`: Ruta al logo de Formula E.
+- `assets.logoEvent`: Ruta al logo del patrocinador (ej. Cupra).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Cómo actualizar Pilotos o Equipos
+Edita `src/data/gameData.ts`:
+- Añade o modifica escuderías en `mockTeams`.
+- Añade pilotos en `mockDrivers`. 
+- **Muy Importante**: Las imágenes deben guardarse en `/public/assets/drivers/` con el nombre exacto definido en el campo `image` del mock (ej: `oliver-rowland.png`).
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Ajustes de Gameplay
+En `src/config/gameConfig.ts` puedes ajustar los milisegundos de:
+- `mismatchDelay`: Cuánto tiempo se ven las cartas si fallas.
+- `idleTimeoutSeconds`: Segundos de inactividad antes de volver al inicio (Attract Mode).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📱 Optimización iPad
+El juego está bloqueado en **modo horizontal** mediante CSS y no permite scroll. El grid de **5x4 (20 cartas)** está calculado para aprovechar al máximo la pantalla del iPad sin desbordar.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛡️ Robustez para Eventos
+- **Preloading**: El sistema prevé la carga de todas las imágenes críticas antes de permitir el inicio.
+- **Anti-spam**: Los clics repetidos están bloqueados durante las transiciones para evitar desajustes de estado.
+- **Idle Mode**: El juego se reinicia automáticamente si un usuario lo deja a medias y nadie interactúa durante el tiempo configurado.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+*Desarrollado para Formula E Event Activation.*
