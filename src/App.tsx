@@ -71,9 +71,12 @@ function App() {
   if (!isLoaded) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#050810] text-white font-sans">
-        <div className="mb-10 flex items-center animate-pulse">
-          <span className="text-4xl font-black italic tracking-tighter text-white mr-2">FORMULA</span>
-          <span className="text-4xl font-black italic tracking-tighter text-[var(--color-fe-cyan)]">E</span>
+        <div className="mb-10 animate-pulse">
+          <img
+            src={GAME_CONFIG.assets.logoFE}
+            alt="Formula E"
+            className="h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_20px_rgba(0,229,255,0.3)]"
+          />
         </div>
         <div className="w-[300px] h-1.5 bg-slate-800 rounded-full overflow-hidden mb-4 shadow-inner">
           <div

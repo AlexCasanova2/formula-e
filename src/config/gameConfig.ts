@@ -38,6 +38,7 @@ export const GAME_CONFIG = {
         backgroundKV: '/assets/branding/background-fe.png',
         textureOverlay: '/assets/branding/textura-fe.png',
         placeholderDriver: '/assets/drivers/placeholder.png',
+        favicon: '/assets/branding/favicon.jpg',
     },
 
     // Colores Principales (Sincronizados con el tema visual)
