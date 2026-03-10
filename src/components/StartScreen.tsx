@@ -29,13 +29,19 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                     </div>
 
                     <div className="px-6 py-2 rounded-full border border-slate-600/60 bg-slate-800/50 backdrop-blur-md shadow-lg">
-                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-fe-cyan)]">
+                        <span
+                            className="text-xs uppercase tracking-[0.2em] text-[var(--color-fe-cyan)]"
+                            style={{ fontFamily: 'var(--font-fe-medium)' }}
+                        >
                             {GAME_CONFIG.event.name}
                         </span>
                     </div>
                 </div>
 
-                <h1 className="relative mb-12 text-4xl font-black tracking-tight text-white drop-shadow-xl md:text-6xl uppercase italic">
+                <h1
+                    className="relative mb-12 text-4xl tracking-tight text-white drop-shadow-xl md:text-6xl uppercase"
+                    style={{ fontFamily: 'var(--font-fe-black)', lineHeight: 0.95, letterSpacing: '-0.02em' }}
+                >
                     {GAME_CONFIG.event.title}
                 </h1>
 
@@ -52,8 +58,14 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </div>
-                        <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter mb-3">Memory Game</h3>
-                        <p className="text-slate-400 text-sm leading-relaxed max-w-[320px]">Encuentra las parejas de pilotos de cada escudería en el menor tiempo posible.</p>
+                        <h3
+                            className="text-2xl text-white uppercase tracking-tighter mb-3"
+                            style={{ fontFamily: 'var(--font-fe-black)', lineHeight: 0.95 }}
+                        >Memory Game</h3>
+                        <p
+                            className="text-slate-400 text-sm leading-relaxed max-w-[320px]"
+                            style={{ fontFamily: 'var(--font-fe-medium)' }}
+                        >Encuentra las parejas de pilotos de cada escudería en el menor tiempo posible.</p>
                         <div className="mt-8 px-6 py-2 bg-[var(--color-fe-cyan)] text-[#050810] text-xs font-black uppercase tracking-widest rounded-full transition-all duration-300 group-hover:scale-110 shadow-lg shadow-[var(--color-fe-cyan)]/20">
                             Seleccionar
                         </div>
@@ -69,8 +81,14 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                             </svg>
                         </div>
-                        <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter mb-3">Matching Game</h3>
-                        <p className="text-slate-400 text-sm leading-relaxed max-w-[320px]">Une a cada piloto profesional con su escudería correcta. ¡Demuestra tu conocimiento!</p>
+                        <h3
+                            className="text-2xl text-white uppercase tracking-tighter mb-3"
+                            style={{ fontFamily: 'var(--font-fe-black)', lineHeight: 0.95 }}
+                        >Matching Game</h3>
+                        <p
+                            className="text-slate-400 text-sm leading-relaxed max-w-[320px]"
+                            style={{ fontFamily: 'var(--font-fe-medium)' }}
+                        >Une a cada piloto profesional con su escudería correcta. ¡Demuestra tu conocimiento!</p>
                         <div className="mt-8 px-6 py-2 bg-[var(--color-fe-cyan)] text-[#050810] text-xs font-black uppercase tracking-widest rounded-full transition-all duration-300 group-hover:scale-110 shadow-lg shadow-[var(--color-fe-cyan)]/20">
                             Seleccionar
                         </div>

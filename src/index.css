@@ -1,11 +1,44 @@
 @import "tailwindcss";
 
+/* ============================================================
+   FE SANS MINI - Formula E Official Typeface
+   @font-face declarations
+   ============================================================ */
+
+@font-face {
+  font-family: 'FE Sans Mini Black';
+  src: url('/assets/fonts/FESans-MiniBlack.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FE Sans Mini Medium';
+  src: url('/assets/fonts/FESans-MiniMedium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
+   TAILWIND THEME TOKENS
+   ============================================================ */
+
 @theme {
   --color-fe-blue: #001489;
   --color-fe-blue-light: #1A36C4;
   --color-fe-cyan: #00E5FF;
   --color-fe-cyan-glow: rgba(0, 229, 255, 0.4);
+
+  /* FE Sans Mini - Tipografía oficial Formula E */
+  --font-fe-black: 'FE Sans Mini Black', 'Arial Black', sans-serif;
+  --font-fe-medium: 'FE Sans Mini Medium', 'Arial', sans-serif;
 }
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 
 @layer base {
 
@@ -21,12 +54,75 @@
   }
 
   body {
-    @apply font-sans antialiased bg-[#001489];
+    /* Body copy uses FE Sans Mini Medium as per brand guidelines */
+    font-family: var(--font-fe-medium);
     background: #001489;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* 'Optics' kerning as per brand guidelines */
+    font-kerning: auto;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings: FE Sans Mini Black with tight line-heights */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-fe-black);
+    font-kerning: auto;
+    text-rendering: optimizeLegibility;
+    /* Tight and impactful line heights as per guidelines */
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  h4,
+  h5,
+  h6 {
+    /* Subheadings can be slightly less tight */
+    line-height: 1.05;
   }
 }
 
+/* ============================================================
+   TYPOGRAPHY UTILITY CLASSES
+   ============================================================ */
+
 @layer utilities {
+
+  /* --- Headings & Prominent Copy --- */
+  .fe-heading {
+    font-family: var(--font-fe-black);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    font-kerning: auto;
+  }
+
+  /* --- Subheadings & Longer Prominent Copy --- */
+  .fe-subheading {
+    font-family: var(--font-fe-medium);
+    line-height: 1.1;
+    font-kerning: auto;
+  }
+
+  /* --- Body copy & Labels --- */
+  .fe-body {
+    font-family: var(--font-fe-medium);
+    line-height: 1.5;
+    font-kerning: auto;
+  }
+
+  /* --- Numerals: Large display numerals (Editorial set) --- */
+  .fe-numeral {
+    font-family: var(--font-fe-black);
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
   .glass-panel {
     @apply bg-slate-900/40 backdrop-blur-xl border border-white/10 shadow-2xl;
   }

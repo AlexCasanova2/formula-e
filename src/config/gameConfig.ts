@@ -51,16 +51,16 @@ export const GAME_CONFIG = {
         dark: '#001489',                // FE Blue (formerly Deep Space)
         glass: 'rgba(15, 23, 42, 0.4)',  // Glassmorphism base
         teams: {
-            cupra: '#00B1A0',
+            cupra: '#000000',
             jaguar: '#000000',
             porsche: '#D5001C',
-            ds: '#D4AF37',
-            andretti: '#ED1B24',
+            ds: '#cba65f',
+            andretti: '#000000',
             nissan: '#C3002F',
-            yamaha: '#7F3FBF',
-            citroen: '#E30613',
-            envision: '#00BE26',
-            mahindra: '#DD052B',
+            yamaha: '#0033A0',
+            citroen: '#eb002a',
+            envision: '#00C900',
+            mahindra: '#e31837',
         }
     }
 };

@@ -24,14 +24,20 @@ export const Hud: React.FC<HudProps> = ({ formattedTime, gameTitle, onRestartCli
                             (e.target as HTMLImageElement).style.display = 'none';
                         }}
                     />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                    <span
+                        className="text-[10px] uppercase tracking-[0.2em] text-slate-400"
+                        style={{ fontFamily: 'var(--font-fe-medium)' }}
+                    >
                         {GAME_CONFIG.event.name}
                     </span>
                 </div>
             </div>
 
-            {/* Main Copy Centered - Dinámico según el juego */}
-            <div className="text-center flex-1 mx-8 text-[1.4rem] font-bold tracking-tight text-white drop-shadow-sm truncate uppercase italic">
+            {/* Main Copy Centered - FE Sans Mini Black, tight heading style */}
+            <div
+                className="text-center flex-1 mx-8 text-[1.4rem] tracking-tight text-white drop-shadow-sm truncate uppercase"
+                style={{ fontFamily: 'var(--font-fe-black)', lineHeight: 0.95 }}
+            >
                 {gameTitle}
             </div>
 
@@ -40,10 +46,16 @@ export const Hud: React.FC<HudProps> = ({ formattedTime, gameTitle, onRestartCli
                 {/* Timer UI Element */}
                 <div className="flex shrink-0 items-center justify-center rounded-[16px] bg-[#050810] px-8 py-2 border border-slate-700/60 shadow-inner mr-2">
                     <div className="flex flex-col items-center justify-center">
-                        <span className="text-[9px] uppercase font-black tracking-[0.3em] text-[var(--color-fe-cyan)]/70 mb-0.5">
+                        <span
+                            className="text-[9px] uppercase tracking-[0.3em] text-[var(--color-fe-cyan)]/70 mb-0.5"
+                            style={{ fontFamily: 'var(--font-fe-black)' }}
+                        >
                             TIEMPO
                         </span>
-                        <span className="font-mono text-3xl font-black tracking-widest text-white text-glow leading-none">
+                        {/* fe-numeral: Editorial set, large display numeral */}
+                        <span
+                            className="fe-numeral text-3xl tracking-widest text-white text-glow leading-none"
+                        >
                             {formattedTime}
                         </span>
                     </div>

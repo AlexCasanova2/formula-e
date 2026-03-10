@@ -29,11 +29,17 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({ formattedTime, moves
 
 
 
-                <h2 className="mb-4 text-6xl md:text-8xl lg:text-9xl font-black italic tracking-tighter text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] uppercase">
+                <h2
+                    className="mb-4 text-6xl md:text-8xl lg:text-9xl text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] uppercase"
+                    style={{ fontFamily: 'var(--font-fe-black)', lineHeight: 0.9, letterSpacing: '-0.02em' }}
+                >
                     {GAME_CONFIG.event.victoryTitle}
                 </h2>
 
-                <p className="mb-12 lg:mb-16 text-xl md:text-2xl lg:text-3xl font-medium text-slate-300 max-w-4xl px-4 leading-relaxed">
+                <p
+                    className="mb-12 lg:mb-16 text-xl md:text-2xl lg:text-3xl text-slate-300 max-w-4xl px-4 leading-relaxed"
+                    style={{ fontFamily: 'var(--font-fe-medium)' }}
+                >
                     {GAME_CONFIG.event.victoryBody.replace('{event}', GAME_CONFIG.event.name)}
                 </p>
 
@@ -42,21 +48,29 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({ formattedTime, moves
 
                     {/* Tiempo */}
                     <div className="flex flex-col items-center justify-center min-w-[280px] lg:min-w-[340px]">
-                        <span className="text-sm lg:text-base font-black uppercase tracking-[0.5em] text-white opacity-90 mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                        <span
+                            className="text-sm lg:text-base uppercase tracking-[0.5em] text-white opacity-90 mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+                            style={{ fontFamily: 'var(--font-fe-black)' }}
+                        >
                             TIEMPO FINAL
                         </span>
-                        <span className="text-7xl lg:text-8xl xl:text-9xl font-mono font-black tracking-widest text-[var(--color-fe-cyan)] drop-shadow-[0_0_25px_var(--color-fe-cyan-glow)]">
+                        {/* Editorial numerals, large display */}
+                        <span className="fe-numeral text-7xl lg:text-8xl xl:text-9xl tracking-widest text-[var(--color-fe-cyan)] drop-shadow-[0_0_25px_var(--color-fe-cyan-glow)]">
                             {formattedTime}
                         </span>
                     </div>
 
                     {/* Movimientos */}
                     <div className="flex flex-col items-center justify-center min-w-[280px] lg:min-w-[340px]">
-                        <span className="text-sm lg:text-base font-black uppercase tracking-[0.5em] text-white opacity-90 mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                        <span
+                            className="text-sm lg:text-base uppercase tracking-[0.5em] text-white opacity-90 mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+                            style={{ fontFamily: 'var(--font-fe-black)' }}
+                        >
                             MOVIMIENTOS
                         </span>
                         <div className="flex items-baseline gap-3">
-                            <span className="text-7xl lg:text-8xl xl:text-9xl font-mono font-black text-white">
+                            {/* Editorial numerals, large display */}
+                            <span className="fe-numeral text-7xl lg:text-8xl xl:text-9xl text-white">
                                 {moves}
                             </span>
                         </div>
