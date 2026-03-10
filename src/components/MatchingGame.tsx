@@ -3,6 +3,22 @@ import type { Driver } from '../types';
 import { mockTeams } from '../data/gameData';
 import { getDriverImageUrl, getTeamColor } from '../data/assets';
 
+// Prefijos de apellidos compuestos que deben incluirse junto al apellido final
+const COMPOUND_PREFIXES = new Set(['da', 'de', 'di', 'van', 'von', 'del', 'la', 'le']);
+
+const getDisplaySurname = (fullName: string): string => {
+    const parts = fullName.trim().split(' ');
+    if (parts.length <= 1) return parts[0] ?? fullName;
+
+    // Si la penúltima palabra es un prefijo compuesto, lo incluimos también
+    const secondToLast = parts[parts.length - 2]?.toLowerCase();
+    if (parts.length >= 2 && secondToLast && COMPOUND_PREFIXES.has(secondToLast)) {
+        return `${parts[parts.length - 2]} ${parts[parts.length - 1]}`;
+    }
+
+    return parts[parts.length - 1] ?? fullName;
+};
+
 interface MatchingGameProps {
     drivers: Driver[];
     onVictory: () => void;
@@ -229,7 +245,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
                                                 <img src={getDriverImageUrl(driver.image)} alt={driver.name} className="h-full w-full object-contain scale-110" />
                                             </div>
                                             <span className={`text-[11px] font-black uppercase italic truncate max-w-[100px] text-center leading-none tracking-tight ${isMatched ? 'text-slate-500' : 'text-white'}`}>
-                                                {driver.name.split(' ').pop()}
+                                                {getDisplaySurname(driver.name)}
                                             </span>
                                         </div>
                                     ))}
