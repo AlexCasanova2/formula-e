@@ -12,7 +12,7 @@
   html,
   body,
   #root {
-    @apply w-full h-full m-0 p-0 overflow-hidden bg-[#0A0E17] text-white select-none;
+    @apply w-full h-full m-0 p-0 overflow-hidden bg-[#001489] text-white select-none;
     -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -21,9 +21,8 @@
   }
 
   body {
-    @apply font-sans antialiased;
-    /* Deep space tech background, similar to Formula E night races */
-    background: radial-gradient(circle at 50% 10%, #0F172A 0%, #050810 100%);
+    @apply font-sans antialiased bg-[#001489];
+    background: #001489;
   }
 }
 

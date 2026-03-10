@@ -8,16 +8,14 @@ interface StartScreenProps {
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
     return (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#050810]/40 backdrop-blur-[8px]">
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#001489]/20 backdrop-blur-[8px]">
 
             {/* Luz ambiental tecnológica */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,_var(--color-fe-blue-light)_0%,_transparent_60%)] opacity-20 blur-[100px] pointer-events-none" />
 
             <div className="relative flex w-full max-w-6xl flex-col items-center justify-center rounded-[40px] bg-slate-900/40 border border-slate-700/50 p-12 md:p-16 text-center shadow-2xl overflow-hidden">
 
-                {/* Textura de Branding configurable */}
-                <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none"
-                    style={{ backgroundImage: `url('${GAME_CONFIG.assets.textureOverlay}')` }} />
+                {/* Eliminada Textura de Branding por petición del usuario */}
 
                 {/* Brand Header */}
                 <div className="relative mb-10 flex flex-col items-center space-y-4">

@@ -15,8 +15,7 @@ interface Point {
 }
 
 interface Match {
-    driverId: string;
-    teamId: string;
+    teamId: string; // The team identified by the group and the target team
     start: Point;
     end: Point;
     color: string;
@@ -24,18 +23,33 @@ interface Match {
 
 export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, onMove }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const pilotRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+    const groupRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const teamRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-    // Barajar al montar
-    const shuffledDrivers = useMemo(() => [...drivers].sort(() => Math.random() - 0.5), [drivers]);
+    // Agrupar pilotos por escudería
+    const driverGroups = useMemo(() => {
+        const groups: { teamId: string; drivers: Driver[] }[] = [];
+        const map: { [key: string]: Driver[] } = {};
+
+        drivers.forEach(d => {
+            if (!map[d.teamId]) map[d.teamId] = [];
+            map[d.teamId].push(d);
+        });
+
+        Object.entries(map).forEach(([teamId, teamDrivers]) => {
+            groups.push({ teamId, drivers: teamDrivers });
+        });
+
+        return groups.sort(() => Math.random() - 0.5);
+    }, [drivers]);
+
     const shuffledTeams = useMemo(() => [...mockTeams].sort(() => Math.random() - 0.5), []);
 
-    const [activeDrag, setActiveDrag] = useState<{ driverId: string; start: Point; current: Point } | null>(null);
+    const [activeDrag, setActiveDrag] = useState<{ teamId: string; start: Point; current: Point } | null>(null);
     const [hoveredTeamId, setHoveredTeamId] = useState<string | null>(null);
-    const [selectedPilotId, setSelectedPilotId] = useState<string | null>(null);
+    const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
     const [completedMatches, setCompletedMatches] = useState<Match[]>([]);
-    const [lastError, setLastError] = useState<{ driverId: string; teamId: string | null; start?: Point; end?: Point } | null>(null);
+    const [lastError, setLastError] = useState<{ teamId: string; targetTeamId: string | null; start?: Point; end?: Point } | null>(null);
 
     // Obtener coordenadas relativas al contenedor
     const getRelativeCoords = useCallback((clientX: number, clientY: number): Point => {
@@ -47,21 +61,20 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
         };
     }, []);
 
-    const handleStartDrag = (e: React.PointerEvent, driverId: string) => {
-        if (completedMatches.find(m => m.driverId === driverId)) return;
+    const handleStartDrag = (e: React.PointerEvent, teamId: string) => {
+        if (completedMatches.find(m => m.teamId === teamId)) return;
 
-        const pilotEl = pilotRefs.current[driverId];
-        if (!pilotEl || !containerRef.current) return;
+        const groupEl = groupRefs.current[teamId];
+        if (!groupEl || !containerRef.current) return;
 
-        const pilotRect = pilotEl.getBoundingClientRect();
-        // El punto de inicio siempre es el centro de la parte derecha de la caja del piloto
-        const startPoint = getRelativeCoords(pilotRect.right, pilotRect.top + pilotRect.height / 2);
+        const groupRect = groupEl.getBoundingClientRect();
+        // El punto de inicio siempre es el centro de la parte derecha de la caja del grupo
+        const startPoint = getRelativeCoords(groupRect.right, groupRect.top + groupRect.height / 2);
         const currentPoint = getRelativeCoords(e.clientX, e.clientY);
 
-        setActiveDrag({ driverId, start: startPoint, current: currentPoint });
-        setSelectedPilotId(driverId);
+        setActiveDrag({ teamId, start: startPoint, current: currentPoint });
+        setSelectedGroupId(teamId);
 
-        // Capturamos el puntero en el CONTENEDOR principal para no perder eventos al salir de la caja del piloto
         containerRef.current.setPointerCapture(e.pointerId);
     };
 
@@ -89,45 +102,43 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
         setHoveredTeamId(detectedTeamId);
     };
 
-    const completeMatch = (driverId: string, teamId: string) => {
-        const driver = drivers.find(d => d.id === driverId);
-        if (driver && driver.teamId === teamId) {
+    const completeMatch = (sourceTeamId: string, targetTeamId: string) => {
+        if (sourceTeamId === targetTeamId) {
             // ACIERTO
-            const pilotEl = pilotRefs.current[driverId];
-            const teamEl = teamRefs.current[teamId];
-            if (!pilotEl || !teamEl) return;
+            const groupEl = groupRefs.current[sourceTeamId];
+            const teamEl = teamRefs.current[targetTeamId];
+            if (!groupEl || !teamEl) return;
 
-            const pRect = pilotEl.getBoundingClientRect();
+            const gRect = groupEl.getBoundingClientRect();
             const tRect = teamEl.getBoundingClientRect();
 
             setCompletedMatches(prev => [
                 ...prev,
                 {
-                    driverId,
-                    teamId,
-                    start: getRelativeCoords(pRect.right, pRect.top + pRect.height / 2),
+                    teamId: sourceTeamId,
+                    start: getRelativeCoords(gRect.right, gRect.top + gRect.height / 2),
                     end: getRelativeCoords(tRect.left, tRect.top + tRect.height / 2),
-                    color: getTeamColor(teamId)
+                    color: getTeamColor(targetTeamId)
                 }
             ]);
             onMove();
-            setSelectedPilotId(null);
+            setSelectedGroupId(null);
         } else {
             // ERROR
-            const pilotEl = pilotRefs.current[driverId];
-            const teamEl = teamRefs.current[teamId];
-            if (pilotEl && teamEl) {
-                const pRect = pilotEl.getBoundingClientRect();
+            const groupEl = groupRefs.current[sourceTeamId];
+            const teamEl = teamRefs.current[targetTeamId];
+            if (groupEl && teamEl) {
+                const gRect = groupEl.getBoundingClientRect();
                 const tRect = teamEl.getBoundingClientRect();
 
                 setLastError({
-                    driverId,
-                    teamId,
-                    start: getRelativeCoords(pRect.right, pRect.top + pRect.height / 2),
+                    teamId: sourceTeamId,
+                    targetTeamId,
+                    start: getRelativeCoords(gRect.right, gRect.top + gRect.height / 2),
                     end: getRelativeCoords(tRect.left, tRect.top + tRect.height / 2)
                 });
             } else {
-                setLastError({ driverId, teamId: null });
+                setLastError({ teamId: sourceTeamId, targetTeamId: null });
             }
 
             setTimeout(() => setLastError(null), 800);
@@ -155,7 +166,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
         }
 
         if (matchedTeamId) {
-            completeMatch(activeDrag.driverId, matchedTeamId);
+            completeMatch(activeDrag.teamId, matchedTeamId);
         }
 
         setActiveDrag(null);
@@ -164,63 +175,75 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
 
     const handleTeamClick = (teamId: string) => {
         // Soporte para click-click si el arrastre falla o prefieren pulsar
-        if (selectedPilotId) {
-            completeMatch(selectedPilotId, teamId);
+        if (selectedGroupId) {
+            completeMatch(selectedGroupId, teamId);
         }
     };
 
     // Comprobar victoria
     useEffect(() => {
-        if (completedMatches.length === drivers.length && drivers.length > 0) {
-            onVictory();
+        if (completedMatches.length === driverGroups.length && driverGroups.length > 0) {
+            setTimeout(onVictory, 500);
         }
-    }, [completedMatches, drivers, onVictory]);
+    }, [completedMatches, driverGroups, onVictory]);
 
     return (
         <div
             ref={containerRef}
-            className="relative flex w-full h-full max-w-7xl mx-auto items-start justify-between px-6 py-4 overflow-hidden touch-none select-none"
+            className="relative flex w-full h-full max-w-[1440px] mx-auto items-center justify-center gap-16 px-8 py-4 overflow-hidden touch-none select-none"
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
         >
             {/* SVG Layer se movió al final */}
 
-            {/* Columna Pilotos (2 Columnas, Compactas) */}
-            <div className="w-[420px] flex flex-col gap-2 overflow-y-auto pr-2 custom-scrollbar z-10 h-full text-left">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2 px-2 sticky top-0 bg-[#050810]/95 py-2 backdrop-blur-sm z-30">Pilotos</h3>
-                <div className="grid grid-cols-2 gap-1.5">
-                    {shuffledDrivers.map(driver => {
-                        const isMatched = completedMatches.some(m => m.driverId === driver.id);
-                        const isDragging = activeDrag?.driverId === driver.id;
-                        const isSelected = selectedPilotId === driver.id;
-                        const hasError = lastError?.driverId === driver.id;
-                        const teamColor = getTeamColor(driver.teamId);
+            {/* Columna Pilotos (2 Columnas de Parejas) */}
+            <div className="w-[680px] flex flex-col gap-2 overflow-y-auto pr-4 custom-scrollbar z-10 max-h-full text-left">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300 mb-3 px-4 sticky top-0 bg-[#001489]/95 py-3 backdrop-blur-md z-30 border-l-2 border-cyan-500/50">
+                    Pilotos por Escudería
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                    {driverGroups.map(group => {
+                        const isMatched = completedMatches.some(m => m.teamId === group.teamId);
+                        const isDragging = activeDrag?.teamId === group.teamId;
+                        const isSelected = selectedGroupId === group.teamId;
+                        const hasError = lastError?.teamId === group.teamId;
+                        const teamColor = getTeamColor(group.teamId);
 
                         return (
                             <div
-                                key={driver.id}
-                                ref={el => { pilotRefs.current[driver.id] = el; }}
-                                onPointerDown={(e) => handleStartDrag(e, driver.id)}
+                                key={group.teamId}
+                                ref={el => { groupRefs.current[group.teamId] = el; }}
+                                onPointerDown={(e) => handleStartDrag(e, group.teamId)}
                                 className={`
-                                    relative flex items-center gap-3 p-3 px-4 rounded-xl border transition-all duration-300 cursor-grab active:cursor-grabbing
+                                    relative flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-300 cursor-grab active:cursor-grabbing
                                     ${isMatched ? 'bg-slate-900/40 border-slate-800 opacity-40' :
                                         (isDragging || isSelected) ? 'bg-blue-900/30 border-[var(--color-fe-cyan)] shadow-[0_0_15px_rgba(0,255,255,0.2)] scale-95' :
-                                            hasError ? 'bg-red-900/40 border-red-500 animate-shake' :
-                                                'bg-slate-800/10 border-white/5 hover:border-white/20'}
+                                            hasError ? 'bg-red-900/40 border-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.3)]' :
+                                                'bg-slate-800/10 border-white/5 hover:border-white/25 hover:bg-slate-800/20'}
                                 `}
                             >
-                                <div className="h-10 w-10 rounded-full overflow-hidden bg-slate-700 border border-white/5 shrink-0 shadow-lg">
-                                    <img src={getDriverImageUrl(driver.image)} alt={driver.name} className="h-full w-full object-contain" />
+                                <div className="flex gap-8 items-center justify-center w-full">
+                                    {group.drivers.map(driver => (
+                                        <div key={driver.id} className="flex flex-col items-center gap-1.5 min-w-[80px]">
+                                            <div className="h-14 w-14 rounded-full overflow-hidden bg-slate-700 border border-white/5 shadow-lg mb-1">
+                                                <img src={getDriverImageUrl(driver.image)} alt={driver.name} className="h-full w-full object-contain scale-110" />
+                                            </div>
+                                            <span className={`text-[11px] font-black uppercase italic truncate max-w-[100px] text-center leading-none tracking-tight ${isMatched ? 'text-slate-500' : 'text-white'}`}>
+                                                {driver.name.split(' ').pop()}
+                                            </span>
+                                        </div>
+                                    ))}
                                 </div>
-                                <span className={`text-[11px] font-black uppercase italic truncate ${isMatched ? 'text-slate-500' : 'text-white'}`}>
-                                    {driver.name.split(' ').pop()}
-                                </span>
 
                                 {isMatched && (
                                     <div
-                                        className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.4)] border-2 border-[#050810]"
+                                        className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.4)] border-2 border-[#001489] flex items-center justify-center z-20"
                                         style={{ backgroundColor: teamColor }}
-                                    />
+                                    >
+                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
                                 )}
                             </div>
                         );
@@ -228,19 +251,19 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
                 </div>
             </div>
 
-            {/* Espacio Central para conexiones */}
-            <div className="flex-1 min-w-[30px]" />
+            {/* Espacio Central para conexiones (Eliminado flex-1 para usar gap) */}
 
             {/* Columna Escuderías (Más grande) */}
-            <div className="w-96 flex flex-col gap-2 overflow-y-auto pr-2 custom-scrollbar z-10 h-full">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2 px-2 sticky top-0 bg-[#050810]/95 py-2 backdrop-blur-sm z-30">Escuderías</h3>
+            <div className="w-96 flex flex-col gap-2 overflow-y-auto pr-4 custom-scrollbar z-10 max-h-full">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300 mb-3 px-4 sticky top-0 bg-[#001489]/95 py-3 backdrop-blur-md z-30 border-l-2 border-cyan-500/50">
+                    Escuderías
+                </h3>
                 <div className="flex flex-col gap-1.5">
                     {shuffledTeams.map(team => {
                         const teamColor = getTeamColor(team.id);
                         const isHovered = hoveredTeamId === team.id;
-                        const matchCount = completedMatches.filter(m => m.teamId === team.id).length;
-                        const isCompleted = matchCount >= 2;
-                        const hasError = lastError?.teamId === team.id;
+                        const isCompleted = completedMatches.some(m => m.teamId === team.id);
+                        const hasError = lastError?.targetTeamId === team.id;
 
                         return (
                             <div
@@ -248,7 +271,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
                                 ref={el => { teamRefs.current[team.id] = el; }}
                                 onClick={() => handleTeamClick(team.id)}
                                 className={`
-                                    relative flex items-center p-3 rounded-lg border transition-all duration-300 text-left cursor-pointer
+                                    relative flex items-center p-4 rounded-xl border transition-all duration-300 text-left cursor-pointer
                                     ${isCompleted ? 'bg-slate-900/40 border-slate-800 opacity-40' :
                                         hasError ? 'bg-red-900/40 border-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.2)]' :
                                             isHovered ? 'bg-blue-900/20 border-[var(--color-fe-cyan)] translate-x-1 shadow-[0_0_15px_rgba(0,255,255,0.1)]' :
@@ -260,7 +283,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ drivers, onVictory, 
                                     className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-lg transition-opacity duration-300"
                                     style={{ backgroundColor: teamColor, opacity: isCompleted ? 0.3 : 0.8 }}
                                 />
-                                <span className={`text-[11px] font-black italic uppercase tracking-tighter pl-3 transition-colors ${isCompleted ? 'text-slate-500' :
+                                <span className={`text-[13px] font-black italic uppercase tracking-tighter pl-3 transition-colors ${isCompleted ? 'text-slate-500' :
                                     isHovered ? 'text-[var(--color-fe-cyan)]' :
                                         'text-white'
                                     }`}>

@@ -9,13 +9,9 @@ interface VictoryModalProps {
 
 export const VictoryModal: React.FC<VictoryModalProps> = ({ formattedTime, moves, onRestart }) => {
     return (
-        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#050810]/80 backdrop-blur-[10px] transition-all duration-1000 animate-in fade-in zoom-in">
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#001489]/90 backdrop-blur-[10px] transition-all duration-1000 animate-in fade-in zoom-in">
 
-            {/* Background Image KV (Configurable) - Misma estética que el inicio */}
-            <div
-                className="absolute inset-0 z-0 opacity-40 pointer-events-none bg-cover bg-center transition-opacity"
-                style={{ backgroundImage: `url('${GAME_CONFIG.assets.backgroundKV}')` }}
-            />
+            {/* Eliminado Background Image KV por petición del usuario */}
             <div
                 className="absolute top-0 left-1/4 w-[800px] h-[800px] opacity-20 blur-[180px] pointer-events-none"
                 style={{ backgroundColor: GAME_CONFIG.colors.primary }}

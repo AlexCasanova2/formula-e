@@ -10,7 +10,7 @@ interface HudProps {
 
 export const Hud: React.FC<HudProps> = ({ formattedTime, gameTitle, onRestartClick, onHomeClick }) => {
     return (
-        <header className="flex h-[110px] w-full items-center justify-between bg-[#0A0E17]/80 px-10 backdrop-blur-[30px] border-b border-white/5 relative z-50 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
+        <header className="flex h-[110px] w-full items-center justify-between bg-[#001489]/60 px-10 backdrop-blur-[30px] border-b border-white/5 relative z-50 shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
 
             {/* Target Logo / Event space */}
             <div className="flex items-center space-x-6 min-w-[320px]">

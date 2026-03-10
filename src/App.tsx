@@ -78,7 +78,7 @@ function App() {
 
   if (!isLoaded) {
     return (
-      <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#050810] text-white font-sans">
+      <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#001489] text-white font-sans">
         <div className="mb-10 animate-pulse">
           <img
             src={GAME_CONFIG.assets.logoFE}
@@ -100,16 +100,12 @@ function App() {
   }
 
   return (
-    <main className="relative flex h-screen w-screen flex-col overflow-hidden bg-[#0A0E17] font-sans text-white select-none">
+    <main className="relative flex h-screen w-screen flex-col overflow-hidden bg-[#001489] font-sans text-white select-none">
 
       {/* Background Decorators Premium FE */}
-      <div className="absolute inset-0 z-0 bg-[#050810] pointer-events-none"></div>
+      <div className="absolute inset-0 z-0 bg-[#001489] pointer-events-none"></div>
 
-      {/* Background Image KV (Configurable) - Aumentada la opacidad para que se vea */}
-      <div
-        className="absolute inset-0 z-0 opacity-50 pointer-events-none bg-cover bg-center transition-opacity"
-        style={{ backgroundImage: `url('${GAME_CONFIG.assets.backgroundKV}')` }}
-      />
+      {/* Eliminado Background Image KV por petición del usuario */}
 
       {/* Luces volumétricas emulando circuito nocturno usando colores de config (Estáticas) */}
       <div

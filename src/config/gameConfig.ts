@@ -48,7 +48,7 @@ export const GAME_CONFIG = {
         primary: '#001489',             // FE Blue
         secondary: '#00E5FF',           // FE Cyan
         accent: '#00B1A0',              // Cupra Teal
-        dark: '#050810',                // Deep Space
+        dark: '#001489',                // FE Blue (formerly Deep Space)
         glass: 'rgba(15, 23, 42, 0.4)',  // Glassmorphism base
         teams: {
             cupra: '#00B1A0',
